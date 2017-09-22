@@ -1,0 +1,9 @@
+{
+  "server": "mysql",
+  "user": "root",
+  "address": "localhost",
+  "password": "p2314h",
+  "database": "test",
+  "mode" : "develop",
+  "extra": ""
+}

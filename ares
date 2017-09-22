@@ -1,0 +1,66 @@
+# Copyright (c) 2016 NIST
+# All Rights Reserved.
+# Author: Junkai Huang
+
+#!/bin/sh
+
+
+#set -e
+
+FILENAME=/tmp/hitvep
+
+. /lib/lsb/init-functions
+
+
+app_stop() {
+    log_daemon_msg "Stopping the HITVEP-services"
+    if [ ! -s $FILENAME ]; then
+        log_failure_msg "HITVEP-service is not active."
+        log_end_msg 1
+        return 0
+    fi
+
+    #while read line
+    #do
+    #     kill -9  $line
+    #     sed -i '/'$line'/d' pid/process.pid
+    #done< $FILENAME
+    python3 stop.py &
+    sleep 2
+    log_end_msg 0
+}
+
+app_start() {
+    log_daemon_msg "Starting the HITVEP-services"
+    if [ -s $FILENAME ]; then 
+        log_failure_msg "HITVEP-service is running."
+        log_end_msg 1
+        return 0
+    fi
+    python3 app.py &
+    sleep 2
+    log_end_msg 0
+}
+
+app_status() {
+    if [ -s $FILENAME ]; then 
+        log_warning_msg "HITVEP-service is running."
+    else
+        log_warning_msg "HITVEP-service is not active." 
+   fi 
+}
+
+case $1 in
+    restart)
+        app_stop;app_start;;
+    start)
+        app_start;;
+    status)
+        app_status;;
+    stop)
+        app_stop;;
+    *) 
+       log_failure_msg "$1: Error: The action is not supported.";;
+esac
+
+exit 0
